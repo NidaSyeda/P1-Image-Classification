@@ -1,4 +1,4 @@
-# Image Classification App with MobileNetV2 and CIFAR-10
+# P1 Image Classification App with MobileNetV2 and CIFAR-10 (AICTE Internship 2024-25)
 
 A Streamlit web application for image classification using MobileNetV2 pre-trained on CIFAR-10 dataset. This application allows users to upload images and get real-time predictions for 10 different classes.
 
@@ -75,64 +75,82 @@ Here's a basic implementation of the main app (`app.py`):
 
 ```python
 import streamlit as st
+import numpy as np
 import tensorflow as tf
 from PIL import Image
-import numpy as np
-from model import load_model
-from utils import preprocess_image
 
-# Set page config
-st.set_page_config(
-    page_title="Image Classification App",
-    page_icon="🔍",
-    layout="wide"
-)
-
-# Title and description
-st.title("Image Classification with MobileNetV2")
-st.write("Upload an image to classify it into one of the CIFAR-10 classes")
-
-# Load model
-@st.cache_resource
-def get_model():
-    return load_model()
-
-model = get_model()
-
-# Class labels
-class_labels = ['airplane', 'automobile', 'bird', 'cat', 'deer', 
-                'dog', 'frog', 'horse', 'ship', 'truck']
-
-# File uploader
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
-
-if uploaded_file is not None:
-    # Display and process image
-    col1, col2 = st.columns(2)
+# Function for MobileNetV2 ImageNet model
+def mobilenetv2_imagenet():
+    st.title("Image Classification with MobileNetV2")
     
-    with col1:
-        st.subheader("Uploaded Image")
+    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png"])
+    
+    if uploaded_file is not None:
         image = Image.open(uploaded_file)
-        st.image(image, caption="Uploaded Image", use_column_width=True)
-    
-    # Preprocess image
-    processed_image = preprocess_image(image)
-    
-    # Make prediction
-    prediction = model.predict(processed_image)
-    predicted_class = class_labels[np.argmax(prediction[0])]
-    confidence = float(np.max(prediction[0]))
-    
-    with col2:
-        st.subheader("Prediction Results")
-        st.write(f"Predicted Class: **{predicted_class}**")
-        st.write(f"Confidence: **{confidence:.2%}**")
+        st.image(image, caption='Uploaded Image', use_column_width=True)
         
-        # Display confidence bars for all classes
-        st.subheader("Confidence Scores")
-        for i, (label, score) in enumerate(zip(class_labels, prediction[0])):
-            st.progress(float(score))
-            st.write(f"{label}: {float(score):.2%}")
+        st.write("Classifying...")
+        
+        # Load MobileNetV2 model
+        model = tf.keras.applications.MobileNetV2(weights='imagenet')
+        
+        # Preprocess the image
+        img = image.resize((224, 224))
+        img_array = np.array(img)
+        img_array = np.expand_dims(img_array, axis=0)
+        img_array = tf.keras.applications.mobilenet_v2.preprocess_input(img_array)
+        
+        # Make predictions
+        predictions = model.predict(img_array)
+        decoded_predictions = tf.keras.applications.mobilenet_v2.decode_predictions(predictions, top=1)[0]
+        
+        for i, (imagenet_id, label, score) in enumerate(decoded_predictions):
+            st.write(f"{label}: {score * 100:.2f}%")
+
+# Function for CIFAR-10 model
+def cifar10_classification():
+    st.title("CIFAR-10 Image Classification")
+    
+    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png"])
+    
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        st.image(image, caption='Uploaded Image', use_column_width=True)
+        
+        st.write("Classifying...")
+        
+        # Load CIFAR-10 model
+        model = tf.keras.models.load_model('cifar10_model.h5')
+        
+        # CIFAR-10 class names
+        class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+        
+        # Preprocess the image
+        img = image.resize((32, 32))
+        img_array = np.array(img)
+        img_array = img_array.astype('float32') / 255.0
+        img_array = np.expand_dims(img_array, axis=0)
+        
+        # Make predictions
+        predictions = model.predict(img_array)
+        predicted_class = np.argmax(predictions, axis=1)[0]
+        confidence = np.max(predictions)
+        
+        st.write(f"Predicted Class: {class_names[predicted_class]}")
+        st.write(f"Confidence: {confidence * 100:.2f}%")
+
+# Main function to control the navigation
+def main():
+    st.sidebar.title("Navigation")
+    choice = st.sidebar.selectbox("Choose Model", ("CIFAR-10","MobileNetV2 (ImageNet)"))
+    
+    if choice == "MobileNetV2 (ImageNet)":
+        mobilenetv2_imagenet()
+    elif choice == "CIFAR-10":
+        cifar10_classification()
+
+if __name__ == "__main__":
+    main()
 ```
 
 ## Contributing
@@ -143,6 +161,15 @@ if uploaded_file is not None:
 4. Push to the branch
 5. Create a new Pull Request
 
-## Screenshot
+## Screenshots
+
+### 1. Home Page
+![Home Page](images/home_page.png)
+
+### 2. Upload Image
+![Upload Image](images/upload_image.png)
+
+### 3. Prediction Results
+![Prediction Results](images/prediction_results.png)
 
 
