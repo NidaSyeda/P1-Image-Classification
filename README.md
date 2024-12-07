@@ -170,6 +170,6 @@ if __name__ == "__main__":
 ![Upload Image](https://github.com/NidaSyeda/P1-Image-Classification/blob/main/Upload_image_ss.png?raw=true)
 
 ### 3. Prediction Results
-![Prediction Results](images/prediction_results.png)
+![Prediction Results](https://github.com/NidaSyeda/P1-Image-Classification/blob/main/predicted_image_ss.png?raw=true)
 
 
