@@ -167,7 +167,7 @@ if __name__ == "__main__":
 ![Home Page](https://github.com/NidaSyeda/P1-Image-Classification/blob/main/Home_page_screenshot.png?raw=true)
 
 ### 2. Upload Image
-![Upload Image](images/upload_image.png)
+![Upload Image](https://github.com/NidaSyeda/P1-Image-Classification/blob/main/Upload_image_ss.png?raw=true)
 
 ### 3. Prediction Results
 ![Prediction Results](images/prediction_results.png)
