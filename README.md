@@ -164,7 +164,7 @@ if __name__ == "__main__":
 ## Screenshots
 
 ### 1. Home Page
-![Home Page](images/home_page.png)
+![Home Page](https://github.com/NidaSyeda/P1-Image-Classification/blob/main/Home_page_screenshot.png?raw=true)
 
 ### 2. Upload Image
 ![Upload Image](images/upload_image.png)
